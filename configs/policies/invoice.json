@@ -1,0 +1,26 @@
+{
+  "doc_id": "INV-001",
+  "title": "发票申请规则",
+  "category": "发票",
+  "version": "2025-03-01",
+  "updated_at": "2025-03-01",
+  "overview": "订单完成后可申请电子发票，支持个人与企业抬头。发票金额为订单实付金额，不含优惠券抵扣部分。",
+  "clauses": [
+    {
+      "clause_id": "INV-001",
+      "title": "电子发票申请",
+      "text": "订单签收后 30 天内可申请电子发票，支持个人抬头与企业抬头，发票在申请后 3 个工作日内开具并发送至预留邮箱。",
+      "action": "special_handling",
+      "applies_to": {},
+      "conditions": [
+        {"field": "signed", "op": "==", "value": true, "label": "订单已签收"},
+        {"field": "days_since_sign", "op": "<=", "value": 30, "label": "签收后天数不超过 30 天"}
+      ],
+      "exceptions": [],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 70,
+      "keywords": ["发票", "开票", "电子发票", "抬头"]
+    }
+  ]
+}

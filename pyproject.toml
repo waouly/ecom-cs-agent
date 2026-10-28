@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ecom-cs-agent"
+version = "0.1.0"
+description = "电商智能客服系统：RAG + Agent + 可执行政策规则引擎 + 生成前后双向校验"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+api = ["fastapi>=0.110", "uvicorn>=0.27"]
+real-llm = ["openai>=1.30"]
+real-embed = ["sentence-transformers>=2.6", "torch>=2.1"]
+milvus = ["pymilvus>=2.4"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+ecom-cs = "ecom_cs.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["ecom_cs*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

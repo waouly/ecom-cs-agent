@@ -1,0 +1,25 @@
+{
+  "doc_id": "MEM-001",
+  "title": "会员权益",
+  "category": "会员",
+  "version": "2025-03-01",
+  "updated_at": "2025-03-01",
+  "overview": "平台会员分为普通、金卡、钻石三个等级。等级越高，价保期、专属客服与运费险权益越优。",
+  "clauses": [
+    {
+      "clause_id": "MEM-001",
+      "title": "金卡会员价保与专属客服",
+      "text": "金卡及以上会员享受 30 天价格保护与专属客服通道，价保期内降价可申请退还差价，专属客服响应时间不超过 30 秒。",
+      "action": "refund_partial",
+      "applies_to": {},
+      "conditions": [
+        {"field": "member_level", "op": "in", "value": ["gold", "diamond"], "label": "会员等级为金卡或钻石"}
+      ],
+      "exceptions": [],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 90,
+      "keywords": ["会员", "金卡", "钻石", "专属客服", "会员权益"]
+    }
+  ]
+}

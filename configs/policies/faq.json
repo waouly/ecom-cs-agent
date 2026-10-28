@@ -1,0 +1,49 @@
+{
+  "doc_id": "FAQ-001",
+  "title": "常见问题",
+  "category": "通用",
+  "version": "2025-03-01",
+  "updated_at": "2025-03-01",
+  "overview": "账号信息、优惠券、人工客服等不在退换货政策范围内的通用问题。",
+  "clauses": [
+    {
+      "clause_id": "FAQ-001",
+      "title": "修改账号绑定手机号",
+      "text": "修改绑定手机号需在账号安全中心完成实名验证，验证通过后 24 小时内生效；原手机号停用的，可通过人工客服提交身份材料处理。",
+      "action": "special_handling",
+      "applies_to": {},
+      "conditions": [],
+      "exceptions": [],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 5,
+      "keywords": ["改手机号", "换绑手机", "手机号不用了", "账号手机"]
+    },
+    {
+      "clause_id": "FAQ-002",
+      "title": "优惠券使用与退回",
+      "text": "订单退款后，未过期的优惠券在 24 小时内退回账户；已过期的优惠券不补发。一个订单仅可使用一张平台券。",
+      "action": "special_handling",
+      "applies_to": {},
+      "conditions": [],
+      "exceptions": [],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 5,
+      "keywords": ["优惠券", "券退回", "券没了", "不能用券"]
+    },
+    {
+      "clause_id": "FAQ-003",
+      "title": "如何联系人工客服",
+      "text": "在线客服工作时间为每天 9 点至 22 点，可点击会话窗口的「转人工」按钮接入；22 点后可留言，次日 9 点前按顺序回拨。",
+      "action": "special_handling",
+      "applies_to": {},
+      "conditions": [],
+      "exceptions": [],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 5,
+      "keywords": ["人工客服", "转人工", "找客服", "客服电话"]
+    }
+  ]
+}

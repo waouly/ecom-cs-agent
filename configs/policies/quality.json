@@ -1,0 +1,58 @@
+{
+  "doc_id": "QUA-001",
+  "title": "质量问题与三包政策",
+  "category": "质量售后",
+  "version": "2025-03-01",
+  "updated_at": "2025-03-01",
+  "overview": "商品存在质量问题的，按国家三包规定与平台规则处理。质量问题需在签收后规定时限内提出并提供凭证，商家承担来回运费。",
+  "clauses": [
+    {
+      "clause_id": "QUA-001",
+      "title": "质量问题退货退款",
+      "text": "商品自签收之日起 15 天内出现质量问题的，可申请退货退款，需提供商品问题照片或视频凭证，退货运费由商家承担。",
+      "action": "refund_full",
+      "applies_to": {},
+      "conditions": [
+        {"field": "has_quality_issue", "op": "==", "value": true, "label": "商品存在质量问题"},
+        {"field": "has_evidence", "op": "==", "value": true, "label": "已提供照片或视频凭证"},
+        {"field": "days_since_sign", "op": "<=", "value": 15, "label": "签收后天数不超过 15 天"}
+      ],
+      "exceptions": [],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 150,
+      "keywords": ["质量问题", "坏了", "破损", "脱线", "有瑕疵", "开胶"]
+    },
+    {
+      "clause_id": "QUA-002",
+      "title": "质量问题 15 天换货",
+      "text": "商品自签收之日起 15 天内出现质量问题的，可选择换货，商家承担来回运费，换货商品在收到退回件后 48 小时内寄出。",
+      "action": "exchange",
+      "applies_to": {},
+      "conditions": [
+        {"field": "has_quality_issue", "op": "==", "value": true, "label": "商品存在质量问题"},
+        {"field": "days_since_sign", "op": "<=", "value": 15, "label": "签收后天数不超过 15 天"}
+      ],
+      "exceptions": [],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 140,
+      "keywords": ["换货", "换一个", "换新的", "质量问题"]
+    },
+    {
+      "clause_id": "QUA-003",
+      "title": "一年保修范围",
+      "text": "数码电子类商品自签收之日起 1 年内享受保修服务，非人为损坏的故障可免费维修，人为损坏与进液不在保修范围内。",
+      "action": "repair",
+      "applies_to": {"category": ["digital"]},
+      "conditions": [
+        {"field": "days_since_sign", "op": "<=", "value": 365, "label": "签收后不超过 1 年"}
+      ],
+      "exceptions": [],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 130,
+      "keywords": ["保修", "维修", "坏了能修吗", "保修期"]
+    }
+  ]
+}

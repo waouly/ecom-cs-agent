@@ -1,0 +1,25 @@
+{
+  "doc_id": "PRI-001",
+  "title": "价格保护政策",
+  "category": "价格",
+  "version": "2025-03-01",
+  "updated_at": "2025-03-01",
+  "overview": "商品在价保期内降价的，可申请退还差价。价保以商品签收时间起算，活动价、百亿补贴等特殊商品不参与价保。",
+  "clauses": [
+    {
+      "clause_id": "PRI-001",
+      "title": "15 天价格保护",
+      "text": "商品自签收之日起 15 天内发生降价的，可申请价格保护退还差价，差价以订单实付金额与当前售价的差额为准。",
+      "action": "refund_partial",
+      "applies_to": {},
+      "conditions": [
+        {"field": "days_since_sign", "op": "<=", "value": 15, "label": "签收后天数不超过 15 天"}
+      ],
+      "exceptions": [],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 80,
+      "keywords": ["降价", "价保", "价格保护", "买贵了", "退差价"]
+    }
+  ]
+}

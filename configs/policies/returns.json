@@ -1,0 +1,160 @@
+{
+  "doc_id": "RET-7D",
+  "title": "七天无理由退货政策",
+  "category": "退换货",
+  "version": "2025-03-01",
+  "updated_at": "2025-03-01",
+  "overview": "本政策适用于通过本平台购买的商品。七天无理由退货以商品签收之日起算，以物流签收时间为准。商品需保持完好、不影响二次销售。退货运费承担方按商品是否存在质量问题区分。",
+  "clauses": [
+    {
+      "clause_id": "RET-7D-001",
+      "title": "服装鞋帽类七天无理由退货",
+      "text": "服装鞋帽类商品，自签收之日起 7 天内、商品未拆封且非定制款，可申请七天无理由退货，退货运费由消费者承担。",
+      "action": "refund_full",
+      "applies_to": {"category": ["apparel"]},
+      "conditions": [
+        {"field": "days_since_sign", "op": "<=", "value": 7, "label": "签收后天数不超过 7 天"},
+        {"field": "opened", "op": "==", "value": false, "label": "商品未拆封"},
+        {"field": "is_custom", "op": "==", "value": false, "label": "商品非定制款"}
+      ],
+      "exceptions": [
+        {
+          "exception_id": "RET-7D-001-E1",
+          "when": [{"field": "has_quality_issue", "op": "==", "value": true}],
+          "action": "refund_full",
+          "text": "商品存在质量问题的，不受未拆封限制，退货运费由商家承担。"
+        }
+      ],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 100,
+      "keywords": ["七天无理由", "7天无理由", "无理由退货", "不想要了", "退货"]
+    },
+    {
+      "clause_id": "RET-7D-002",
+      "title": "家具家装类七天无理由退货",
+      "text": "家具家装类商品，自签收之日起 7 天内、商品未拆封且非定制款，可申请七天无理由退货。大件商品退回运费由消费者承担，需自行联系物流。",
+      "action": "refund_full",
+      "applies_to": {"category": ["furniture"]},
+      "conditions": [
+        {"field": "days_since_sign", "op": "<=", "value": 7, "label": "签收后天数不超过 7 天"},
+        {"field": "opened", "op": "==", "value": false, "label": "商品未拆封"},
+        {"field": "is_custom", "op": "==", "value": false, "label": "商品非定制款"}
+      ],
+      "exceptions": [
+        {
+          "exception_id": "RET-7D-002-E1",
+          "when": [{"field": "has_quality_issue", "op": "==", "value": true}],
+          "action": "refund_full",
+          "text": "存在质量问题的家具，退货运费由商家承担并安排上门取件。"
+        }
+      ],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 100,
+      "keywords": ["家具退货", "大件退货", "七天无理由"]
+    },
+    {
+      "clause_id": "RET-7D-003",
+      "title": "数码电子类七天无理由退货",
+      "text": "数码电子类商品，自签收之日起 7 天内、商品未拆封且未激活，可申请七天无理由退货。已拆封或已激活的数码商品不支持无理由退货。",
+      "action": "refund_full",
+      "applies_to": {"category": ["digital"]},
+      "conditions": [
+        {"field": "days_since_sign", "op": "<=", "value": 7, "label": "签收后天数不超过 7 天"},
+        {"field": "opened", "op": "==", "value": false, "label": "商品未拆封"}
+      ],
+      "exceptions": [
+        {
+          "exception_id": "RET-7D-003-E1",
+          "when": [{"field": "has_quality_issue", "op": "==", "value": true}],
+          "action": "refund_full",
+          "text": "数码商品存在质量问题的，已拆封仍可申请退货退款。"
+        }
+      ],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 100,
+      "keywords": ["数码退货", "耳机退货", "拆封", "激活", "七天无理由"]
+    },
+    {
+      "clause_id": "RET-7D-004",
+      "title": "内衣贴身类商品退货",
+      "text": "内衣、贴身衣物等个人卫生用品，自签收之日起 7 天内且未拆封的，可申请七天无理由退货；已拆封的不支持无理由退货。",
+      "action": "refund_full",
+      "applies_to": {"category": ["underwear"]},
+      "conditions": [
+        {"field": "days_since_sign", "op": "<=", "value": 7, "label": "签收后天数不超过 7 天"},
+        {"field": "opened", "op": "==", "value": false, "label": "商品未拆封"}
+      ],
+      "exceptions": [
+        {
+          "exception_id": "RET-7D-004-E1",
+          "when": [{"field": "has_quality_issue", "op": "==", "value": true}],
+          "action": "refund_full",
+          "text": "存在质量问题的贴身衣物，拆封后仍可申请退换。"
+        }
+      ],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 200,
+      "keywords": ["内衣退货", "贴身衣物", "拆封"]
+    },
+    {
+      "clause_id": "RET-7D-005",
+      "title": "定制商品不支持七天无理由",
+      "text": "按消费者要求定制、刻字、改尺寸的商品，一经签收不支持七天无理由退货，但质量问题仍按三包政策处理。",
+      "action": "reject",
+      "applies_to": {"category": ["custom"]},
+      "conditions": [],
+      "exceptions": [
+        {
+          "exception_id": "RET-7D-005-E1",
+          "when": [{"field": "has_quality_issue", "op": "==", "value": true}],
+          "action": "refund_full",
+          "text": "定制商品存在质量问题的，按质量问题退货处理，退货运费由商家承担。"
+        }
+      ],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 300,
+      "keywords": ["定制", "刻字", "不支持退货", "定制款"]
+    },
+    {
+      "clause_id": "RET-7D-006",
+      "title": "生鲜食品不支持七天无理由",
+      "text": "生鲜食品、鲜活易腐类商品不支持七天无理由退货。出现腐烂、变质、缺斤少两的，按坏果包赔处理，需在签收后 48 小时内提供照片凭证。",
+      "action": "reject",
+      "applies_to": {"category": ["fresh"]},
+      "conditions": [],
+      "exceptions": [
+        {
+          "exception_id": "RET-7D-006-E1",
+          "when": [
+            {"field": "has_quality_issue", "op": "==", "value": true},
+            {"field": "has_evidence", "op": "==", "value": true}
+          ],
+          "action": "refund_full",
+          "text": "生鲜商品变质且已提供照片凭证的，可全额退款或补发。"
+        }
+      ],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 300,
+      "keywords": ["生鲜", "水果", "坏果", "变质", "腐烂"]
+    },
+    {
+      "clause_id": "RET-7D-007",
+      "title": "退货运费承担规则",
+      "text": "无理由退货的退货运费由消费者承担；因商品质量问题退货的，退货运费由商家承担，可选择上门取件或自行寄回后报销。",
+      "action": "refund_shipping",
+      "applies_to": {},
+      "conditions": [],
+      "exceptions": [],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 10,
+      "keywords": ["运费", "退货邮费", "谁出运费", "邮费"]
+    }
+  ]
+}

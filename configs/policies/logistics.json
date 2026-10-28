@@ -1,0 +1,64 @@
+{
+  "doc_id": "LOG-001",
+  "title": "发货与物流规则",
+  "category": "物流",
+  "version": "2025-03-01",
+  "updated_at": "2025-03-01",
+  "overview": "订单付款后按商品页标注时效发货。物流在途异常、超时未更新、显示签收但未收到等情况，按本规则处理。",
+  "clauses": [
+    {
+      "clause_id": "LOG-001",
+      "title": "发货时效",
+      "text": "现货商品在付款后 48 小时内发货；预售商品按商品详情页标注的发货时间发货，最长不超过 30 天。",
+      "action": "special_handling",
+      "applies_to": {},
+      "conditions": [],
+      "exceptions": [],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 20,
+      "keywords": ["什么时候发货", "发货时间", "还不发货", "多久发货"]
+    },
+    {
+      "clause_id": "LOG-002",
+      "title": "物流停滞异常处理",
+      "text": "物流轨迹超过 72 小时未更新的，可申请物流异常核查，平台在 24 小时内联系承运商介入，核查期间可申请补发或退款。",
+      "action": "special_handling",
+      "applies_to": {},
+      "conditions": [],
+      "exceptions": [],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 20,
+      "keywords": ["物流不动了", "物流停滞", "好几天没更新", "快递异常"]
+    },
+    {
+      "clause_id": "LOG-003",
+      "title": "显示签收但未收到货",
+      "text": "物流显示已签收但实际未收到的，需在签收后 48 小时内反馈，平台核实后优先补发；核实为丢件的按订单实付金额全额退款。",
+      "action": "special_handling",
+      "applies_to": {},
+      "conditions": [],
+      "exceptions": [],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 20,
+      "keywords": ["没收到货", "显示签收没收到", "快递丢了", "找不到包裹"]
+    },
+    {
+      "clause_id": "LOG-004",
+      "title": "修改收货地址",
+      "text": "订单未发货前可免费修改收货地址；已发货订单无法修改地址，需联系快递改派，改派产生的费用由消费者承担。",
+      "action": "special_handling",
+      "applies_to": {},
+      "conditions": [
+        {"field": "shipped", "op": "==", "value": false, "label": "订单尚未发货"}
+      ],
+      "exceptions": [],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 60,
+      "keywords": ["改地址", "修改地址", "换地址", "地址填错了"]
+    }
+  ]
+}

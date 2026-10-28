@@ -1,0 +1,49 @@
+{
+  "doc_id": "REF-001",
+  "title": "退款流程与到账时效",
+  "category": "退款",
+  "version": "2025-03-01",
+  "updated_at": "2025-03-01",
+  "overview": "退款单提交后由平台审核，审核通过后按原支付渠道退回。不同支付渠道到账时间不同，超时未到账需提供支付流水号核查。",
+  "clauses": [
+    {
+      "clause_id": "REF-001",
+      "title": "退款审核时效",
+      "text": "退款申请提交后，平台在 1 至 3 个工作日内完成审核；审核通过后原路退回，无需消费者额外操作。",
+      "action": "refund_full",
+      "applies_to": {},
+      "conditions": [],
+      "exceptions": [],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 20,
+      "keywords": ["退款多久", "退款时效", "审核多久", "什么时候到账", "退款进度"]
+    },
+    {
+      "clause_id": "REF-002",
+      "title": "各支付渠道退款到账时间",
+      "text": "微信、支付宝渠道退款在审核通过后 1 至 3 个工作日到账；银行卡渠道需 3 至 7 个工作日到账；平台余额实时到账。",
+      "action": "refund_full",
+      "applies_to": {},
+      "conditions": [],
+      "exceptions": [],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 20,
+      "keywords": ["到账时间", "银行卡退款", "微信退款", "支付宝退款", "几天到账"]
+    },
+    {
+      "clause_id": "REF-003",
+      "title": "退款失败处理",
+      "text": "退款因原支付账户异常退回失败的，平台会在 3 个工作日内联系消费者重新提供收款账户，逾期未联系的退款将自动转为平台余额。",
+      "action": "special_handling",
+      "applies_to": {},
+      "conditions": [],
+      "exceptions": [],
+      "effective_from": "2025-03-01",
+      "effective_to": null,
+      "priority": 20,
+      "keywords": ["退款失败", "退款没到", "没收到退款", "退回失败"]
+    }
+  ]
+}
