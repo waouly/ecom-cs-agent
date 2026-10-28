@@ -53,13 +53,30 @@
 cd ecom-cs-agent
 python -m ecom_cs.cli demo        # 9 组脚本化场景（改地址二次确认、已发货拒绝、注入、投诉…）
 python -m ecom_cs.cli chat        # 交互式对话（/trace 看上一轮完整轨迹）
+python -m ecom_cs.cli serve       # 起 FastAPI + 演示台，打开 http://127.0.0.1:8000
 python -m ecom_cs.cli eval        # 跑评测集并打印指标
 python -m ecom_cs.cli calibrate   # 用评测集拟合置信度校准与保形阈值
-python -m ecom_cs.cli serve       # 起 FastAPI：/chat、/chat/stream、/stats
-python -m unittest discover -s tests   # 54 个测试
+python -m unittest discover -s tests   # 57 个测试
 ```
 
 要求 Python ≥ 3.10，只用标准库 +（可选）FastAPI/httpx/numpy。没有 Key、没有 Milvus、没有 GPU 也能跑通全链路。
+
+## 演示台（Web UI）
+
+```bash
+python -m ecom_cs.cli serve
+# 浏览器打开 http://127.0.0.1:8000
+```
+
+单文件前端（`ecom_cs/api/static/index.html`），**不引任何 CDN、不需要 npm**，FastAPI 直接静态托管，断网也能用。
+
+- 左：对话区 + 8 条示例问句（退货资格、物流、写操作、注入等），可切换 `u_demo / u_other` 演示越权拦截；
+- 右：**本轮判定面板**——决策（自动答复 / 追问 / 转人工）、意图、路由、档位、耗时、成本、转人工原因；
+- 置信度：四信号融合值 + 校准概率 + 阈值刻度，直观看到「为什么这一轮降级」；
+- 引用条款：点条款 ID 弹原文（`GET /policies/{id}`）；
+- 执行轨迹：逐节点耗时。
+
+演示重点不是聊天界面，而是**把判定摊开**：客服系统的价值在「为什么这么答」，而不是「答得像人」。
 
 ## 评测（当前仓库状态）
 

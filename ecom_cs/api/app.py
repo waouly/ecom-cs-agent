@@ -14,14 +14,18 @@ from __future__ import annotations
 
 import json
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Optional
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from ..config import get_settings
 from ..orchestrator import ChatService, build_deps
+
+STATIC_DIR = Path(__file__).resolve().parent / "static"
 
 
 class ChatRequest(BaseModel):
@@ -58,6 +62,13 @@ def create_app(service: Optional[ChatService] = None) -> FastAPI:
 
     def svc() -> ChatService:
         return app.state.svc
+
+    # 演示台是单文件静态页，不引入构建链；直接挂在 / 上，serve 起来打开就是 UI。
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+    @app.get("/", include_in_schema=False)
+    def index() -> FileResponse:
+        return FileResponse(STATIC_DIR / "index.html")
 
     @app.get("/health")
     def health() -> dict:
