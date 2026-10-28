@@ -70,6 +70,10 @@ python -m ecom_cs.cli serve
 
 橙色电商风的对话式演示台：**Tailwind v4 预编译成 `static/app.css` 一起提交，运行时不引 CDN、不需要 Node**，断网也能用。改样式才需要 Node：
 
+![演示台：政策判定 + 商品卡片 + 订单与物流侧栏](docs/demo-console.png)
+
+深链分享：`http://127.0.0.1:8000/?ask=O10001 签收三天还没拆，能退吗` 打开即自动提问。
+
 ```bash
 pnpm install        # 只装 tailwindcss / @tailwindcss/cli 两个构建期依赖
 pnpm build:css      # 源码 static/src/input.css → 产物 static/app.css（约 0.1s）
