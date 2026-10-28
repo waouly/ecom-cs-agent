@@ -5,6 +5,10 @@
 > 默认零外部依赖：自研状态图引擎 + 内存向量库 + 规则/模板作答，`python -m ecom_cs.cli demo` 直接出结果。
 > 配好 OpenAI 兼容 Key / Milvus / BGE 后即可切真实模型与真实向量库，代码路径不变。
 
+**文档**：[设计文档](docs/DESIGN.md) · [面试答辩手册](docs/INTERVIEW.md) · [端到端评测集](configs/eval/scenarios.jsonl) · [API](ecom_cs/api/app.py)
+
+**当前状态**：54 个单测全绿 · 30 条端到端用例 decision / intent / clause / verify 四项均 1.000 · mock 与 `deepseek-chat` 双跑一致 · 离线可跑、零外部依赖
+
 ---
 
 ## 为什么不是「RAG + Prompt」
