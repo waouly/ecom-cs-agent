@@ -73,6 +73,19 @@ python -m unittest discover -s tests   # 54 个测试
 
 > 这是**自建小评测集**，不是公开 benchmark；它的价值是「改一行规则就能看到哪类问题退化」，而不是对外宣称的 SOTA。指标口径见 `docs/DESIGN.md`。
 
+### 同一套用例接真实模型（deepseek-chat）
+
+| 指标 | mock | deepseek-chat |
+| --- | --- | --- |
+| decision_accuracy | 1.000 | 1.000 |
+| intent_accuracy | 1.000 | 1.000 |
+| clause_hit | 1.000 | 1.000 |
+| verify_pass_rate | 1.000 | 1.000 |
+| 平均延迟 | ~5 ms | ~1.47 s（p50 ≈ 6 ms，绝大多数轮次被 L0/L1 吃掉） |
+| 33 轮成本（按内置价格表估算） | 0 | ≈ $0.0077（约 $0.00023/轮） |
+
+接真实模型的第一轮**并不**是满分（decision 0.967 / verify 0.833）：模型会在正确结论后面补一句「信息不足，建议转人工」、会把结构化字段名写进回复、会把引擎算出的动作短语说得不像模板。修法分两层——生成侧删掉越权话术（`clean_llm_reply`），核验侧把动作短语登记为可信事实（`trusted`）。这两处修复的来龙去脉写在 `docs/DESIGN.md` 第 4 节。
+
 ## 目录
 
 ```

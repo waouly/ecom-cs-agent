@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import json
+import re
 from typing import Any, Optional, Protocol
 
 from ..config import Settings
@@ -284,12 +285,32 @@ class HeuristicAnswerer:
 # 真实模型实现
 # ---------------------------------------------------------------------------
 
-_SYSTEM_PROMPT = """你是电商售后客服助手。必须严格遵守：
-1. 只能依据【证据】和【结构化判定】作答，不得引入任何外部知识或臆测。
-2. 引用条款时必须写明条款 ID，格式为（条款 XXX-XXX-000）。
-3. 回答中出现的任何天数、金额、比例、时效，必须能在证据或工具结果中原样找到。
-4. 若证据不足，直接回答「信息不足，建议转人工」，不要编造。
-5. 中文作答，简洁，不超过 120 字。"""
+_SYSTEM_PROMPT = """你是电商售后客服的答复撰写器。判定已由规则引擎完成，你只负责把【结构化判定】和【证据】写成一句可直接发给用户的中文答复。
+
+硬性规则：
+1. 结论必须与【结构化判定】一致：status=applicable 就说明可以办理并点出满足的关键条件；status=not_applicable 就说明哪一条不满足，只有证据明确支持时才给后续路径；status=unknown 或 info 就只转述条款规定，不下结论、不追问。
+2. 不得改判，不得建议转人工，不得输出「信息不足」「无法判断」「需要您提供」这类内部话术——是否追问、是否转人工由系统决定。
+3. 引用条款写成（条款 XXX-XXX-000），最多引用 2 条。
+4. 天数、金额、比例、时效只能原样使用【证据】或【工具结果】中的数字，禁止换算或推算。
+5. 禁止输出英文字段名、JSON、括号占位符；中文，1-3 句，不超过 100 字，不要客套。"""
+
+# 模型常见的「越权话术」：它把系统该做的决策替你做了一遍。
+# 这类句子和系统决策冲突（已判 answer 却被建议转人工），也无法通过证据核验，
+# 与其让核验层把整条回复打回，不如在生成侧先删掉。
+# 注意：这里按「整句」删除且保留其余文本的原始标点，不能走 split_sentences 再拼接——
+# 那个函数对长句会按逗号切开且丢掉逗号，拼回去会变成没有标点的粘连长句。
+_META_SENT_RE = re.compile(
+    r"[^。！？!?\n]*?(?:信息不足|建议转人工|无法判断|无法核实|需要更多信息|请提供订单号)[^。！？!?\n]*[。！？!?]?"
+)
+_FIELD_NAME = re.compile(r"\b[a-z][a-z0-9]*(?:_[a-z0-9]+)+\b")
+
+
+def clean_llm_reply(text: str) -> str:
+    """删掉模型自由发挥出来的内部话术与英文字段名。"""
+    cleaned = _META_SENT_RE.sub("", text or "")
+    cleaned = _FIELD_NAME.sub("相关信息", cleaned)
+    cleaned = re.sub(r"[ \t]{2,}", " ", cleaned).strip()
+    return cleaned
 
 
 class LLMAnswerer:
@@ -325,6 +346,10 @@ class LLMAnswerer:
                     ensure_ascii=False,
                 )
             )
+            # 信息型 / 未知状态下，模型很爱说「您的订单签收后不超过 15 天，符合…」——
+            # 它把「普遍规定」错说成了「对具体订单的断言」。这里明确提醒一次。
+            if policy.info_only or policy.status == PolicyStatus.UNKNOWN:
+                lines.append("（本条只转述政策规定：禁止使用「您的订单…」「您可以…」这类对具体订单的断言）")
         if tool_results:
             lines.append("【工具结果】")
             for r in tool_results:
@@ -348,9 +373,16 @@ class LLMAnswerer:
         ctx = self._render_context(evidence, policy, tool_results)
         user = f"【历史摘要】{summary or '无'}\n{ctx}\n\n【用户问题】{question}\n请作答。"
         try:
-            return self.client.chat(
+            raw = self.client.chat(
                 [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": user}]
             ).strip()
+            cleaned = clean_llm_reply(raw)
+            if cleaned:
+                return cleaned
+            return self.fallback.generate(
+                question=question, evidence=evidence, policy=policy,
+                tool_results=tool_results, slots=slots, summary=summary,
+            )
         except Exception:  # noqa: BLE001
             return self.fallback.generate(
                 question=question, evidence=evidence, policy=policy,

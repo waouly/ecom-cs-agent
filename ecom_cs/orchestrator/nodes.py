@@ -686,7 +686,9 @@ def n_verify(state, ctx: TurnContext) -> str:
             trusted += list(p.satisfied) + [v.split("，")[0] for v in p.violated] + list(p.violated)
             label = ACTION_LABEL.get(p.action, p.action)
             if p.status == PolicyStatus.APPLICABLE:
-                trusted.append(f"因此您可以{label}")
+                # 真实模型很少照抄「因此您可以{label}」，它更可能写「可申请全额退款」。
+                # 动作短语本身就来自引擎结论，所以单独登记一份，别让核验层把正确结论判成编造。
+                trusted += [f"因此您可以{label}", label]
             if p.status == PolicyStatus.NOT_APPLICABLE:
                 trusted += ["因此暂时无法办理", "很抱歉"]
                 extras.append(HeuristicAnswerer._hint(p.violated))
