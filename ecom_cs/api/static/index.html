@@ -111,8 +111,6 @@
 
   .bar { height: 7px; border-radius: 999px; background: #eef2f7; overflow: hidden; margin: 4px 0 2px; }
   .bar > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .35s; }
-  .bar.thr { position: relative; }
-  .bar.thr::after { content: ""; position: absolute; top: -1px; bottom: -1px; width: 2px; background: var(--warn); left: 0; }
   .scale { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
 
   .citation {
@@ -305,12 +303,16 @@ function renderInspector(out) {
     conf.appendChild(el("div", "", "四信号融合 " + raw.toFixed(3)));
     const b1 = el("div", "bar"); const i1 = el("i"); i1.style.width = (raw * 100) + "%"; b1.appendChild(i1); conf.appendChild(b1);
     conf.appendChild(el("div", "", "校准概率 " + cal.toFixed(3) + " / 阈值 " + thr.toFixed(3)));
-    const b2 = el("div", "bar thr"); const i2 = el("i"); i2.style.width = (cal * 100) + "%";
-    i2.style.background = cal >= thr ? "var(--ok)" : "var(--warn)"; b2.appendChild(i2);
-    b2.style.setProperty("--thr", (thr * 100) + "%"); b2.querySelector("i");
+    const b2 = el("div", "bar");
     b2.style.position = "relative";
+    const i2 = el("i");
+    i2.style.width = (cal * 100) + "%";
+    i2.style.background = cal >= thr ? "var(--ok)" : "var(--warn)";
+    b2.appendChild(i2);
     const mark = el("u");
-    mark.style.cssText = "position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--warn);left:" + (thr * 100) + "%";
+    mark.style.cssText =
+      "position:absolute;top:0;bottom:0;width:2px;background:#0f172a;opacity:.6;left:calc(" +
+      (thr * 100) + "% - 1px)";
     b2.appendChild(mark);
     conf.appendChild(b2);
     const sc = el("div", "scale");
