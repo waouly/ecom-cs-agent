@@ -47,6 +47,51 @@ def _public(payload: dict) -> dict:
     return out
 
 
+def _order_card(order: dict) -> dict:
+    """订单 → 前端商品卡片。
+
+    只保留「用户看得懂、界面用得上」的字段；类目/状态的中文标签由 repo 层补齐，
+    免得前端再维护一份映射表（映射漂移是客服系统最常见的脏数据来源）。
+    """
+    return {
+        "order_no": order.get("order_no"),
+        "title": order.get("title") or "",
+        "category": order.get("category") or "",
+        "category_label": order.get("category_label") or order.get("category") or "",
+        "amount": order.get("amount"),
+        "status": order.get("status") or "",
+        "status_label": order.get("status_label") or order.get("status") or "",
+        "paid_at": order.get("paid_at") or "",
+        "signed_at": order.get("signed_at") or "",
+        "address": order.get("address") or "",
+        "opened": bool(order.get("opened")),
+        "is_custom": bool(order.get("is_custom")),
+        "can_change_address": order.get("status") == "paid",
+    }
+
+
+def _attach_cards(out: dict, repo) -> dict:
+    """把工具结果里的订单/物流摊成前端可直接渲染的卡片，不改动 Agent 原输出。"""
+    for t in out.get("tool_results") or []:
+        if not t.get("ok"):
+            continue
+        data = t.get("data") or {}
+        if t.get("name") == "lookup_order":
+            order = repo.get_order(str(data.get("order_no") or ""))
+            if order:
+                out["product"] = _order_card(order)
+        elif t.get("name") == "lookup_logistics" and data.get("has_logistics"):
+            out["logistics"] = {
+                "order_no": data.get("order_no"),
+                "carrier": data.get("carrier") or "",
+                "tracking_no": data.get("tracking_no") or "",
+                "status_label": data.get("status_label") or "",
+                "description": data.get("description") or "",
+                "last_update": data.get("last_update") or "",
+            }
+    return out
+
+
 def create_app(service: Optional[ChatService] = None) -> FastAPI:
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -77,11 +122,57 @@ def create_app(service: Optional[ChatService] = None) -> FastAPI:
     @app.post("/chat")
     def chat(req: ChatRequest) -> dict:
         out = svc().respond(req.session_id, req.user_id, req.message)
-        return _public(out)
+        return _attach_cards(_public(out), svc().deps.repo)
+
+    @app.get("/orders")
+    def orders(user_id: str = "u_demo", limit: int = 8) -> dict:
+        """当前用户的历史订单（右侧栏）。
+
+        user_id 由前端显式传入是因为演示台允许切用户看越权拦截；
+        真实系统里它必须来自登录态，绝不能信前端。
+        """
+        rows = svc().deps.repo.list_orders(user_id, limit=max(1, min(limit, 50)))
+        return {"count": len(rows), "orders": [_order_card(r) for r in rows]}
+
+    @app.get("/orders/{order_no}")
+    def order_detail(order_no: str, user_id: str = "u_demo") -> dict:
+        deps = svc().deps
+        order = deps.repo.get_order(order_no)
+        # 不存在与不属于当前用户返回同一个 404：避免拿订单号探测他人订单是否存在
+        if order is None or order.get("user_id") != user_id:
+            raise HTTPException(404, "order not found")
+        log = deps.repo.get_logistics(order_no)
+        aftersales = [
+            {
+                "aftersale_no": r.get("aftersale_no"),
+                "type_label": r.get("type_label", r.get("type")),
+                "status_label": r.get("status_label", r.get("status")),
+                "created_at": r.get("created_at"),
+                "eta": r.get("eta", ""),
+            }
+            for r in deps.repo.list_aftersales(user_id)
+            if r.get("order_no") == order_no
+        ]
+        return {
+            "order": _order_card(order),
+            "logistics": (
+                {
+                    "carrier": log.get("carrier") or "",
+                    "tracking_no": log.get("tracking_no") or "",
+                    "status": log.get("status") or "",
+                    "status_label": log.get("status_label") or "",
+                    "description": log.get("description") or "",
+                    "updated_at": log.get("updated_at") or "",
+                }
+                if log
+                else None
+            ),
+            "aftersales": aftersales,
+        }
 
     @app.post("/chat/stream")
     def chat_stream(req: ChatRequest) -> StreamingResponse:
-        out = svc().respond(req.session_id, req.user_id, req.message)
+        out = _attach_cards(svc().respond(req.session_id, req.user_id, req.message), svc().deps.repo)
 
         def gen():
             # 先发一个 meta 事件，前端可以立刻渲染决策标签/转人工提示
@@ -102,6 +193,8 @@ def create_app(service: Optional[ChatService] = None) -> FastAPI:
                 "calibrated": out.get("calibrated"),
                 "cost_usd": out.get("cost_usd"),
                 "tier": out.get("tier"),
+                "product": out.get("product"),
+                "logistics": out.get("logistics"),
             }
             yield f"event: done\ndata: {json.dumps(tail, ensure_ascii=False)}\n\n"
 

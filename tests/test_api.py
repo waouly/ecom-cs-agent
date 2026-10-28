@@ -53,6 +53,36 @@ class ApiTest(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertIn("七天无理由", r.json()["title"])
 
+    def test_orders_feed_returns_demo_orders(self):
+        r = self.client.get("/orders", params={"user_id": "u_demo", "limit": 5})
+        self.assertEqual(r.status_code, 200)
+        body = r.json()
+        self.assertLessEqual(body["count"], 5)
+        order = next(o for o in body["orders"] if o["order_no"] == "O10001")
+        # 商品卡片要能显示名称与价格，所以列表接口必须带 title/amount/status_label
+        self.assertTrue(order["title"])
+        self.assertGreater(order["amount"], 0)
+        self.assertTrue(order["status_label"])
+
+    def test_order_detail_hides_other_users_order(self):
+        # O10009 属于 u_other：查询者不是所有者时，与「不存在」返回同一个 404，
+        # 避免用订单号撞库探测他人订单（越权侧信道）。
+        self.assertEqual(self.client.get("/orders/O10009", params={"user_id": "u_demo"}).status_code, 404)
+        self.assertEqual(self.client.get("/orders/O10009", params={"user_id": "u_other"}).status_code, 200)
+        self.assertEqual(self.client.get("/orders/O99999", params={"user_id": "u_demo"}).status_code, 404)
+
+    def test_chat_attaches_product_card(self):
+        r = self.client.post(
+            "/chat",
+            json={"session_id": "t2", "user_id": "u_demo", "message": "O10001 签收三天还没拆，能退吗？"},
+        )
+        self.assertEqual(r.status_code, 200)
+        product = r.json().get("product")
+        self.assertIsNotNone(product)
+        self.assertEqual(product["order_no"], "O10001")
+        self.assertIn("title", product)
+        self.assertIn("status_label", product)
+
 
 if __name__ == "__main__":
     unittest.main()

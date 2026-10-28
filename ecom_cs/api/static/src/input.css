@@ -1,0 +1,95 @@
+/*
+ * 演示台样式源文件（Tailwind v4）。
+ *
+ * 为什么带构建链：运行时必须是「离线可跑、零 Node 依赖」，所以样式**预编译**成
+ * app.css 一起提交；改样式时 pnpm build:css 重新生成。这样既拿到了 Tailwind 的
+ * 设计 token（间距/色阶/响应式），又不把 npm 变成运行前置。
+ */
+
+@import "tailwindcss";
+
+@source "../index.html";
+
+@theme {
+  /* 主色：电商橙。选它而不是蓝色，是因为价格/行动点需要暖色刺激，蓝留给「可信」状态。 */
+  --color-brand-50: #fff7ed;
+  --color-brand-100: #ffedd5;
+  --color-brand-200: #fed7aa;
+  --color-brand-300: #fdba74;
+  --color-brand-400: #fb923c;
+  --color-brand-500: #f97316;
+  --color-brand-600: #ea580c;
+  --color-brand-700: #c2410c;
+  --color-brand-800: #9a3412;
+  --color-brand-900: #7c2d12;
+
+  --font-sans: "MiSans", "PingFang SC", "Microsoft YaHei", ui-sans-serif, system-ui, sans-serif;
+  --animate-fade-in-up: fade-in-up 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-dot: dot 1.8s ease-in-out infinite;
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 在线状态呼吸灯：用 box-shadow 扩散而不是缩放，避免在浅色背景上出现硬边 */
+@keyframes dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45); }
+  50% { box-shadow: 0 0 0 5px rgba(34, 197, 94, 0); }
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-gray-200/80 bg-white shadow-sm;
+  }
+  .icon-btn {
+    @apply inline-flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition
+           hover:bg-gray-100 hover:text-slate-900 focus:outline-none focus-visible:ring-2
+           focus-visible:ring-brand-300;
+  }
+  .bubble-bot {
+    @apply whitespace-pre-wrap break-words rounded-2xl rounded-tl-md border border-gray-200/70
+           bg-white px-4 py-3 text-[15px] leading-7 text-slate-800 shadow-sm;
+  }
+  .bubble-user {
+    @apply whitespace-pre-wrap break-words rounded-2xl rounded-tr-md bg-brand-500 px-4 py-3
+           text-[15px] leading-7 text-white shadow-sm;
+  }
+  .chip {
+    @apply shrink-0 cursor-pointer rounded-full border border-gray-200 bg-white px-3.5 py-1.5
+           text-[13px] text-slate-600 shadow-sm transition
+           hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium;
+  }
+  .badge-answer { @apply border-emerald-200 bg-emerald-50 text-emerald-700; }
+  .badge-clarify { @apply border-amber-200 bg-amber-50 text-amber-700; }
+  .badge-escalate { @apply border-rose-200 bg-rose-50 text-rose-700; }
+  .badge-plain { @apply border-gray-200 bg-gray-50 text-slate-500; }
+  .product-card {
+    @apply mt-3 flex items-start gap-3 rounded-xl border border-gray-200/80 bg-gray-50/80 p-3;
+  }
+  .thumb {
+    @apply flex h-14 w-14 shrink-0 items-center justify-center rounded-lg text-2xl;
+  }
+  /* 侧栏订单列表用的紧凑缩略图：尺寸不同但又不能用 !important 覆盖，
+     所以单独定义一个语义类，比在 JS 里堆 !h-9 !w-9 更可维护。 */
+  .thumb-sm {
+    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-base;
+  }
+  .ghost-btn {
+    @apply rounded-lg px-2 py-1 text-[12px] text-brand-600 transition hover:bg-brand-50;
+  }
+  .field {
+    @apply w-full resize-none rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-[15px]
+           leading-6 text-slate-800 outline-none transition
+           focus:border-brand-300 focus:bg-white focus:ring-4 focus:ring-brand-100;
+  }
+  .d-none { display: none !important; }
+}
+
+/* 快捷标签横向滑动，隐藏滚动条（macOS/Windows 都会出现丑陋的横条） */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

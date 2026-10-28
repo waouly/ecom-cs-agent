@@ -1,0 +1,21 @@
+{
+  "name": "ecom-cs-agent-ui",
+  "private": true,
+  "description": "演示台的 Tailwind 构建链：产物 app.css 已提交，运行时不依赖 Node。改样式时 pnpm build:css 重新生成即可。",
+  "scripts": {
+    "build:css": "tailwindcss -i ./ecom_cs/api/static/src/input.css -o ./ecom_cs/api/static/app.css --minify",
+    "watch:css": "tailwindcss -i ./ecom_cs/api/static/src/input.css -o ./ecom_cs/api/static/app.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.14",
+    "tailwindcss": "^4.1.14"
+  },
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "@parcel/watcher"
+    ],
+    "neverBuiltDependencies": [
+      "@parcel/watcher"
+    ]
+  }
+}

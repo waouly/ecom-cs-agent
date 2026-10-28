@@ -1,0 +1,4 @@
+# @parcel/watcher 只在 tailwindcss --watch 模式用到原生模块，
+# 这里关掉它的构建脚本，避免 pnpm 因「未批准的构建脚本」直接拒绝执行命令。
+allowBuilds:
+  '@parcel/watcher': false

@@ -31,3 +31,7 @@ Thumbs.db
 .ruff_cache/
 .coverage
 htmlcov/
+
+# --- 前端构建工具链 ---
+# app.css 是预编译产物，要提交（运行时不需要 Node）；node_modules 只是构建期依赖。
+node_modules/
