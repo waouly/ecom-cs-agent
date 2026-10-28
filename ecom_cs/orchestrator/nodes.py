@@ -215,6 +215,10 @@ def n_understand(state, ctx: TurnContext) -> str:
             state.tool_results = [res]
             state.decision = Decision.ANSWER
             state.tier = "L0"
+            # 这一分支的回复是「前置条件校验 + 模板」直出的，没有检索也没调模型，
+            # 统计置信度不适用；给一个固定值只是为了让日志里不出现 0.00 的假象。
+            state.confidence = 0.9
+            state.calibrated = 0.9
             if res.ok and res.data.get("needs_confirm"):
                 state.meta["pending_action"] = {"tool": "change_address", "args": args}
                 state.reply = (

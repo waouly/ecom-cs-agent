@@ -20,7 +20,11 @@ from ..utils.text import normalize
 
 ORDER_RE = re.compile(r"[Oo]\s?[-_]?\s?(\d{5,})")
 AMOUNT_RE = re.compile(r"(\d+(?:\.\d+)?)\s*(?:元|块钱|块|rmb)", re.IGNORECASE)
-ADDRESS_RE = re.compile(r"(?:改成|改到|改为|换成|换到|寄到|送到|地址是)([^\s，。？！,?！]{4,60})")
+ADDRESS_RE = re.compile(
+    # 地址正文用「非空白字符」截断，但门牌号常被空格分开（「麓山南路 2 号」），
+    # 所以补一个可选的「数字 + 号/栋/室」尾巴，否则会把门牌号吃掉。
+    r"(?:改成|改到|改为|换成|换到|寄到|送到|地址是)([^\s，。？！,?！]{4,60}(?:\s*\d+\s*[号栋室])?)"
+)
 
 NEG_OPENED = ("未拆封", "没拆封", "还没有拆", "还没拆", "没拆", "未拆", "没打开", "还没有打开",
               "没动过", "没使用", "没用过", "没穿", "没洗", "未激活", "没激活", "全新未拆")
@@ -101,7 +105,10 @@ class SlotExtractor:
 
         m = ADDRESS_RE.search(norm)
         if m:
-            hits.append(SlotHit("new_address", m.group(1).strip("，。"), 0.8, "regex"))
+            address = m.group(1).strip("，。 ")
+            # 去掉正文与门牌号之间多余的空格（「麓山南路 2 号」→「麓山南路 2 号」保留单空格）
+            address = re.sub(r"\s+", " ", address)
+            hits.append(SlotHit("new_address", address, 0.8, "regex"))
 
         opened = self._polarity(norm, NEG_OPENED, POS_OPENED)
         if opened is not None:

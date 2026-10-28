@@ -47,7 +47,7 @@
 
 ```bash
 cd ecom-cs-agent
-python -m ecom_cs.cli demo        # 8 组脚本化场景
+python -m ecom_cs.cli demo        # 9 组脚本化场景（改地址二次确认、已发货拒绝、注入、投诉…）
 python -m ecom_cs.cli chat        # 交互式对话（/trace 看上一轮完整轨迹）
 python -m ecom_cs.cli eval        # 跑评测集并打印指标
 python -m ecom_cs.cli calibrate   # 用评测集拟合置信度校准与保形阈值
